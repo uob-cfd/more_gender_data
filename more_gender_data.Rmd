@@ -335,8 +335,8 @@ rich_gd <- ...
 head(rich_gd)
 ```
 
-You might want to look at the results above to check that the values in the new
-subset do indeed all have values for `heppc` that are greater than 1.
+You might want to look at the results above to check that the values in the
+new subset do indeed all have values for `heppc` that are greater than 1.
 
 Now we just have the countries that are spending more than a thousand public
 dollars per person on health care, is there any convincing relationship
