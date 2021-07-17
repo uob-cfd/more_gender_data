@@ -339,8 +339,9 @@ You might want to look at the results above to check that the values in the
 new subset do indeed all have values for `heppc` that are greater than 1.
 
 Now we just have the countries that are spending more than a thousand public
-dollars per person on health care, is there any convincing relationship
-between how much the country spends, and the maternal mortality ratio?
+dollars per person on health care.  For these countries, is there any
+convincing relationship between how much the country spends, and the maternal
+mortality ratio?
 
 Use the new `rich_gd` data frame to plot the `heppc` values on the x axis
 against the `mat_mort_ratio` values on the y-axis, for the high-spending
