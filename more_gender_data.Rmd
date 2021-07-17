@@ -1,0 +1,402 @@
+---
+title: "Gender, health, and wealth"
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document: default
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you
+execute code within the notebook, the results appear beneath the code.
+
+Try executing this chunk by clicking the *Run* button within the chunk or by
+placing your cursor inside it and pressing *Cmd+Shift+Enter*.
+
+
+```{r}
+# A little calculation, to warm up.
+42 * 2
+```
+
+As you probably know by now, you can add a new chunk by clicking the *Insert
+Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be
+saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to
+preview the HTML file).
+
+In this Notebook, we will ask you to "show" some values.  For example, imagine
+you had already set a variable `a` to contain the value 10:
+
+```{r}
+a <- 10
+```
+
+To "show"" the value, you put the variable on a line on its own, at the end of
+the chunk, like this:
+
+```{r}
+a
+```
+
+When you execute the chunk, the value appears after the chunk.
+
+## Introducing the data
+
+The Notebook uses the same data that you have already seen in the [R
+from scratch](https://www.datacamp.com/courses/r-from-scratch)
+tutorial.
+
+As you may remember from the tutorial, this dataset is a subset of a
+larger dataset from the World Bank on gender and inequality:
+<https://data.worldbank.org/data-catalog/gender-statistics>.
+
+The subset is a selection of variables for every country. For each variable,
+we have taken the mean of all available values from 2012 through 2016.  If
+you're very interested, the data processing is in [this web
+directory](https://github.com/odsti/datasets/tree/master/gender_stats).
+
+As in the tutorial, we need to load the file into memory, as an R
+*data frame*:
+
+```{r}
+# Run this chunk.  Do not change it.
+gender_data <- read.csv('gender_stats.csv')
+```
+
+After executing the chunk above, you should have a new variable called
+`gender_data`, of type *data frame*.
+
+One way of getting a quick look at the data, is to use the `head` function on
+the new `gender_data` data frame, like this:
+
+```{r}
+# Run this chunk.
+head(gender_data)
+```
+
+This shows the first six rows of the data frame, along with the column names.
+You already know these column names from the tutorial.  You can see all the
+column names with:
+
+```{r}
+# Run this chunk.
+names(gender_data)
+```
+
+Here are the column names with a brief description of what they mean:
+
+* `fert_rate`: Fertility rate, total (births per woman).
+* `gdp_us_billion`: GDP in units of current US billion dollars.
+* `health_exp_per_cap`: Health expenditure per capita, PPP (constant 2011
+  international \$).
+* `health_exp_pub`: Health expenditure, public (% of GDP).
+* `prim_ed_girls`: Primary education, pupils (% female).
+* `mat_mort_ratio`: Maternal mortality ratio (modeled estimate, per 100,000 live births).
+* `population`: Population, total (millions).
+
+## Exploring the data
+
+Our hypothesis is that there may be some relationship between the
+amount of public money that a country spends on health
+(`health_exp_pub`), and the maternal mortality ratio
+(`mat_mort_ratio`).
+
+Because you are now have some training in data analysis, you want to
+explore the data first.
+
+A first step is to look at the distributions of the values for each
+column, using histograms.
+
+First show the histogram for the `health_exp_pub` column:
+
+```{r}
+#- Type the command to show a histogram of the 'health_exp_pub' column of
+#- the 'gender_data' data frame.
+#- 10 marks / 140 (total 10 so far).
+hist(...)
+```
+
+Next show the histogram for the `mat_mort_ratio` column:
+
+```{r}
+#- Type the command to show a histogram of the 'mat_mort_ratio' column of
+#- the 'gender_data' data frame.
+#- 5 marks / 140 (total 15 so far).
+...
+```
+
+Use the `median` function to calculate the default median value for
+`health_exp_pub` is `NA` (Not Available):
+
+```{r}
+#- Use the 'median' function to calculate that the median value for the
+#- `health_exp_pub` column of 'gender_data' is NA. Store as `med_hep_all`.
+#- 5 marks / 140 (total 20 so far).
+med_hep_all <- ...
+# Don't change the code below.
+# Show the result
+med_hep_all
+```
+
+This NA value means that one or more of the `health_exp_pub` values are NA.
+
+Remember your "R from scratch" reading, and repeat the median calculation, but
+dropping the NA values:
+
+```{r}
+#- Type the command to calculate the median value for the
+#- `health_exp_pub` column, after removing the NA values.
+#- Store as variable `med_hep_present`.
+#- 10 marks / 140 (total 30 so far).
+med_hep_present <- ...
+# Don't change the code below.
+# Show the result
+med_hep_present
+```
+
+Calculate the median value for the `mat_mort_ratio` column, after dropping the
+NA values:
+
+```{r}
+#- Type the command to calculate the median value for the
+#- `mat_mort_ratio` column, after removing the NA values.
+#- 5 marks / 140 (total 35 so far).
+med_mmr <- ...
+# Don't change the code below.
+# Show the result
+med_mmr
+```
+
+## Plotting the variables
+
+Plot the `health_exp_pub` column against the `mat_mort_ratio` column.
+The data from the `health_exp_pub` column should be on the x axis, and
+the data from the `mat_mort_ratio` column should be on the y axis.
+
+```{r}
+#- Type the commands to plot values in the 'health_exp_pub' column
+#- against the `mat_mort_ratio` values.
+#- 15 marks / 140 (total 50 so far).
+...
+```
+
+## Calculating public health expenditure per person
+
+Have a look at the definition of `health_exp_pub` above - it is public health
+expenditure as a percentage of the country's [Gross Domestic
+Product](https://en.wikipedia.org/wiki/Gross_domestic_product) (GDP).
+
+Maybe that is not a good measure to use, to predict maternal mortality.  Maybe
+the key measure is not the percentage of the GDP spent on health, but the
+public dollars spent per person (per capita).
+
+You need to calculate this number, for each row (and therefore, each country).
+
+Start by dividing `health_exp_pub` by 100, to get public health expenditure as
+a *proportion* of GDP.  The chunk below makes a new variable, where every
+element in the `health_exp_pub` column has been divided by 100. Run it to get
+the new variable:
+
+```{r}
+# Calculate public health expenditure as proportion of GDP
+# Don't change the code here.
+# Run this chunk to create the variable.
+health_exp_pub_prop <- gender_data$health_exp_pub / 100
+# Show the first six values
+head(health_exp_pub_prop)
+```
+
+You can check this calculation by showing the median of the
+`health_exp_pub_prop` variable, after removing the `NA` values.  It should be
+same as the value you found for `med_hep_present` above, but divided by 100.
+
+**Remember `health_exp_pub_prop` is a *variable* and not a column in a data
+frame**.
+
+```{r}
+#- Type the command to calculate the median value for the
+#- `health_exp_pub_prop` variable, after removing the NA values.
+#- 5 marks / 140 (total 55 so far).
+med_hep_prop <- ...
+# Don't change the code below.
+# Show the result
+med_hep_prop
+```
+
+Next, make a new variable called `health_exp_pub_total`, by multiplying the
+values in your `health_exp_pub_prop` variable by the values in the
+`gdp_us_billion` column of `gender_data`.  This gives you the total public
+health expenditure, in billions of US dollars.
+
+```{r}
+#- Create a new variable 'health_exp_pub_total' that contains the
+#- `health_exp_pub_prop` variable multiplied by the 'gdp_us_billion'
+#- column of 'gender_data'.
+#- Your code will start with 'health_exp_pub_total <-'
+#- 10 marks / 140 (total 65 so far).
+health_exp_pub_total <- ...
+# Show the first 6 values in the result
+head(health_exp_pub_total)
+```
+
+Finally, make another new variable, `health_exp_pub_per_cap`, that contains the
+result of dividing the values in `health_exp_pub_total` by the values in the
+`population` column of `gender_data`.
+
+The `population` column is in units of a million people, so the result is in
+units of billion dollars per million people, or, equivalently, in thousands of
+dollars per person.
+
+Therefore, this is the public health expenditure per person (per _capita_), in
+thousands of dollars.
+
+```{r}
+#- Create a new variable 'health_exp_pub_per_cap' that contains the
+#- `health_exp_pub_total` variable divided by the 'population' column of
+#- 'gender_data'.
+#- 10 marks / 140 (total 75 so far).
+health_exp_pub_per_cap <- ...
+# Show the first six values in the result.
+head(health_exp_pub_per_cap)
+```
+
+Show a histogram of the values in `health_exp_pub_per_cap`:
+
+```{r}
+#- Show a histogram of the values in 'health_exp_pub_per_cap`.
+#- 10 marks / 140 (total 85 so far).
+...
+```
+
+Calculate the median of the values in `health_exp_pub_per_cap`, with the `NA`
+values removed:
+
+```{r}
+#- Show the median of the values in 'health_exp_pub_per_cap`, after removing
+#- the NA values.
+#- 5 marks / 140 (total 90 so far).
+med_heppc <- ...
+# Show the result.
+med_heppc
+```
+
+Plot the `health_exp_pub_per_cap` values against the values in the
+`mat_mort_ratio` column of `gender_data`.  The `health_exp_pub_per_cap` values
+go on the x axis, and the `mat_mort_ratio` values go on the y axis.
+
+```{r}
+#- Plot 'health_exp_pub_per_cap' against `mat_mort_ratio`.
+#- 10 marks / 140 (total 100 so far).
+...
+```
+
+## Follow the money
+
+It looks as if per-capita spending on health care makes a big difference
+between values of 0 and 1 (thousand dollars), but much less difference, per
+thousand dollars, for higher values.
+
+Let's restrict our attention to the countries that are spending more than 1
+thousand public dollars on health care, per person.
+
+First, we make a copy of the `gender_data` data frame, called `with_heppc`.
+Then we put the `health_exp_pub_per_cap` values into the copied data frame as
+a new column.
+
+```{r}
+# Run this code; do not change it.
+# Copy the `gender_data` data frame.
+with_heppc <- data.frame(gender_data)
+# Put the health_exp_pub_per_cap values into the copy as a new column.
+with_heppc$heppc <- health_exp_pub_per_cap
+# Show the first six rows of this new data frame.
+head(with_heppc)
+```
+
+If you scroll across the columns of the `with_heppc` data frame, you will see
+that that the `health_exp_pub_per_cap` values are in a new column called
+`heppc`.
+
+Use the `subset` function to select the rows from the new `with_heppc` data
+frame that have values in the `heppc` column that are greater than 1. If you
+can't remember how to take subsets, go back over the [DataCamp tutorial]
+(https://campus.datacamp.com/courses/statistical-inference-and-data-analysis).
+
+Call the result of your subset: `rich_gd`.
+
+```{r}
+#- Select rows from the `with_heppc` data frame, corresponding to values > 1 in
+#- the `heppc` - column.
+#- 15 marks / 140 (total 115 so far).
+rich_gd <- ...
+# Don't change this code.
+# Show the first six rows of the result.
+head(rich_gd)
+```
+
+You might want to look at the results above to check that the values in the new
+subset do indeed all have values for `heppc` that are greater than 1.
+
+Now we just have the countries that are spending more than a thousand public
+dollars per person on health care, is there any convincing relationship
+between how much the country spends, and the maternal mortality ratio?
+
+Use the new `rich_gd` data frame to plot the `heppc` values on the x axis
+against the `mat_mort_ratio` values on the y-axis, for the high-spending
+countries.
+
+```{r}
+#- Plot the `heppc` values (x-axis) against the `mat_mort_ratio` values
+#- (y-axis) *for the `rich_gd` data frame.
+#- 10 marks / 140 (total 125 so far).
+...
+```
+
+I hope you find that there does not seem to be a strong relationship of the
+spending of these high-spending countries, and the maternal mortality ratio.
+
+Some of these countries seem to be spending a lot, and yet still have a fairly
+high maternal mortality ratio.  The money does not seem to be effective in
+improving health for childbirth, overall.
+
+Use `subset` to find and show the countries in the `rich_gd` data frame that
+have a value greater than 12 in `mat_mort_ratio`:
+
+```{r}
+#- Select the rows from `rich_gd` where `mat_mort_ratio` is greater than 12.
+#- 10 marks / 140 (total 135 so far).
+bad_rich <- ...
+# Show the result.
+bad_rich
+```
+
+Have a look at the result.  Now fill in value for the `worst_value_country`
+variable below with the full name of the country from the `rich_gd` data frame
+that has the highest `mat_mort_ratio`.  For example, if you thought that New
+Zealand had the highest `mat_mort_ratio` in the `rich_gd` data frame, your
+answer would be:
+
+```
+worst_value_country <- "New Zealand".
+```
+
+```{r}
+#- Here I've set the country name to "United Kingdom", which is wrong. 
+#- Change it to the full name of the country with the highest
+#- `mat_mort_ratio`.
+#- 5 marks / 140 (total 140 so far).
+worst_value_country <- "United Kingdom"
+# Show the result.
+worst_value_country
+```
+
+## Before you submit
+
+Before you submit this Notebook for marking, make sure that all the chunks
+execute correctly.  To do that, go to the Run button at the top of the
+notebook, and click "Restart R and Clear Output".  Then go to the top of the
+notebook, and run each chunk in turn, to make sure that they run without error,
+and give you the output you expect.  *Remember, we're going to run an automated
+marking script over this file, so it has to execute correctly, for you to get
+the marks*.
